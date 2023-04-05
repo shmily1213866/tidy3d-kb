@@ -11,27 +11,31 @@ on:
         default: dev
         required: true
 jobs:
-  set_environment:
+  set_repository_name:
     outputs:
-      my_env: ${{ steps.setenv.outputs.my_env }}
+      repository_name: ${{ steps.set_repository_name.outputs.repository_name }}
     runs-on: ubuntu-latest
     steps:
-      - id: setenv
+      - id: set_repository_name
         run: |
-          if test -n "${{ github.event.inputs.env }}"
+          if test -n "${{ github.event.inputs.env }}" = 'dev'
           then
-            echo "::set-output name=my_env::${{ github.event.inputs.env }}"
+            echo "::set-output name=repository_name::shmily1213866/kb-dev"
+          fi
+          if test -n "${{ github.event.inputs.env }}" = 'prod'
+          then
+            echo "::set-output name=repository_name::shmily1213866/kb"
           fi
           if test "${{ github.event_name }}" = 'push' -a "${{ github.ref }}" = 'refs/heads/develop'
           then
-            echo "::set-output name=my_env::dev"
+            echo "::set-output name=repository_name::shmily1213866/kb-dev"
           fi
           if test "${{ github.event_name }}" = 'push' -a "${{ github.ref }}" = 'refs/heads/main'
           then
-            echo "::set-output name=my_env::prod"
+            echo "::set-output name=repository_name::shmily1213866/kb"
           fi
   build-and-deploy:
-    needs: set_environment
+    needs: set_repository_name
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -52,6 +56,6 @@ jobs:
           folder: docs/.vuepress/dist
           token: ${{ secrets.KB_TOKEN }}
           branch: main
-          repository-name: shmily1213866/kb-${{ needs.set_environment.outputs.my_env }}
+          repository-name: ${{ needs.set_repository_name.outputs.repository_name }}
           target-folder: tidy3d
           single-commit: true
