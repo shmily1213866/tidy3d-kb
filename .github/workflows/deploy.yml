@@ -18,11 +18,11 @@ jobs:
     steps:
       - id: set_repository_name
         run: |
-          if test -n "${{ github.event.inputs.env }}" = 'dev'
+          if test "${{ github.event.inputs.env }}" = 'dev'
           then
             echo "::set-output name=repository_name::shmily1213866/kb-dev"
           fi
-          if test -n "${{ github.event.inputs.env }}" = 'prod'
+          if test "${{ github.event.inputs.env }}" = 'prod'
           then
             echo "::set-output name=repository_name::shmily1213866/kb"
           fi
