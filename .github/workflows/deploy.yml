@@ -55,6 +55,7 @@ jobs:
         with:
           folder: docs/.vuepress/dist
           token: ${{ secrets.KB_TOKEN }}
+          branch: master
           repository-name: ${{ needs.set_repository_name.outputs.repository_name }}
           target-folder: tidy3d
           single-commit: true
