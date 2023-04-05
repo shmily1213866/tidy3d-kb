@@ -1,5 +1,7 @@
 name: A-TO-B:MASTER
 on: [push]
+permissions:
+  contents: write
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
