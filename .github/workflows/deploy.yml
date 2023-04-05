@@ -7,9 +7,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@master
     - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16
     - name: Install Yarn
         run: npm install -g yarn
     - name: Build
