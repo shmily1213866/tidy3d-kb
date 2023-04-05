@@ -13,10 +13,10 @@ on:
 jobs:
   set_repository_name:
     outputs:
-      repository_name: ${{ steps.set_repository_name.outputs.repository_name }}
+      repository_name: ${{ steps.setrepositoryname.outputs.repository_name }}
     runs-on: ubuntu-latest
     steps:
-      - id: set_repository_name
+      - id: setrepositoryname
         run: |
           if test "${{ github.event.inputs.env }}" = 'dev'
           then
