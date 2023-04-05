@@ -1,7 +1,37 @@
 name: A-TO-B:MASTER
-on: [push]
+on:
+  push:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+    inputs:
+      env:
+        description: environment
+        default: dev
+        required: true
 jobs:
+  set_environment:
+    outputs:
+      my_env: ${{ steps.setenv.outputs.my_env }}
+    runs-on: ubuntu-latest
+    steps:
+      - id: setenv
+        run: |
+          if test -n "${{ github.event.inputs.env }}"
+          then
+            echo "::set-output name=my_env::${{ github.event.inputs.env }}"
+          fi
+          if test "${{ github.event_name }}" = 'push' -a "${{ github.ref }}" = 'refs/heads/develop'
+          then
+            echo "::set-output name=my_env::dev"
+          fi
+          if test "${{ github.event_name }}" = 'push' -a "${{ github.ref }}" = 'refs/heads/main'
+          then
+            echo "::set-output name=my_env::prod"
+          fi
   build-and-deploy:
+    needs: set_environment
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -20,8 +50,8 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: docs/.vuepress/dist
-          ssh-key: ${{ secrets.ID_RSA_KB }}
-          branch: gh-pages
-          repository-name: shmily1213866/kb
+          ssh-key: ${{ secrets.ID_RSA_KB_${{ needs.set_environment.outputs.my_env }} }}
+          branch: main
+          repository-name: shmily1213866/kb-${{ needs.set_environment.outputs.my_env }}
           target-folder: tidy3d
           single-commit: true
