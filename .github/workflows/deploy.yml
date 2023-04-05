@@ -50,7 +50,7 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: docs/.vuepress/dist
-          ssh-key: ${{ secrets.ID_RSA_KB_${{ needs.set_environment.outputs.my_env }} }}
+          ssh-key: ${{ secrets.KB_TOKEN }}
           branch: main
           repository-name: shmily1213866/kb-${{ needs.set_environment.outputs.my_env }}
           target-folder: tidy3d
