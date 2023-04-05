@@ -24,6 +24,7 @@ jobs:
           repository-name: shmily1213866/kb
           target-folder: tidy3d
           ssh-key: ${{ secrets.ID_RSA_KB }}
+          single-commit: true
       # - name: Deploy
       #   uses: s0/git-publish-subdir-action@develop
       #   env:
