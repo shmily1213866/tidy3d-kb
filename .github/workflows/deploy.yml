@@ -53,7 +53,7 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: docs/.vuepress/dist
-          token: ${{ secrets.KB }}
+          token: ${{ secrets.KB_TOKEN }}
           repository-name: shmily1213866/kb-${{ needs.set_env.outputs.env }}
           clean-exclude: |
             /flow360
