@@ -11,31 +11,27 @@ on:
         default: dev
         required: true
 jobs:
-  set_repository_name:
+  set_env:
     outputs:
-      repository_name: ${{ steps.setrepositoryname.outputs.repository_name }}
+      env: ${{ steps.setenv.outputs.env }}
     runs-on: ubuntu-latest
     steps:
-      - id: setrepositoryname
+      - id: setenv
         run: |
-          if test "${{ github.event.inputs.env }}" = 'dev'
+          if test -n "${{ github.event.inputs.env }}"
           then
-            echo "::set-output name=repository_name::shmily1213866/kb-dev"
-          fi
-          if test "${{ github.event.inputs.env }}" = 'prod'
-          then
-            echo "::set-output name=repository_name::shmily1213866/kb"
+            echo "::set-output name=env::${{ github.event.inputs.env }}"
           fi
           if test "${{ github.event_name }}" = 'push' -a "${{ github.ref }}" = 'refs/heads/develop'
           then
-            echo "::set-output name=repository_name::shmily1213866/kb-dev"
+            echo "::set-output name=env::dev"
           fi
           if test "${{ github.event_name }}" = 'push' -a "${{ github.ref }}" = 'refs/heads/main'
           then
-            echo "::set-output name=repository_name::shmily1213866/kb"
+            echo "::set-output name=env::prod"
           fi
   build-and-deploy:
-    needs: set_repository_name
+    needs: set_env
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -50,12 +46,16 @@ jobs:
         run: |
           yarn install
           yarn run docs:build
+      - name: Copy 404.html
+        run: |
+          cp docs/.vuepress/dist/tidy3d/404.html docs/.vuepress/dist
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: docs/.vuepress/dist
-          token: ${{ secrets.KB_TOKEN }}
-          branch: master
-          repository-name: ${{ needs.set_repository_name.outputs.repository_name }}
-          target-folder: tidy3d
+          token: ${{ secrets.KB }}
+          repository-name: shmily1213866/kb-${{ needs.set_env.outputs.env }}
+          clean-exclude: |
+            /flow360
+            /index.html
           single-commit: true
